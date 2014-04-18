@@ -1,7 +1,15 @@
 package com.asinenko.udpserver;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PointF;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -16,24 +24,71 @@ public class TouchImageView extends ImageView{
 	private final GestureDetector gestureDetector;
 	private Context context;
 	private SparseArray<PointF> mActivePointers = new SparseArray<PointF>();;
+	private boolean mIsBound;
 
 	public TouchImageView(Context context) {
 		super(context);
 		this.context = context;
 		gestureDetector = new GestureDetector(context, new MyGestureListener());
+		//doBindService();
 	}
-	
+
 	public TouchImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		this.context = context;
 		gestureDetector = new GestureDetector(context, new MyGestureListener());
+		//doBindService();
 	}
 
 	public TouchImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		gestureDetector = new GestureDetector(context, new MyGestureListener());
+		//doBindService();
 	}
+
+	public void doBindService() {
+		if(!mIsBound){
+			this.context.bindService(new Intent(this.context, UdpServerService.class), mConnection, Context.BIND_AUTO_CREATE);
+			mIsBound = true;
+		}
+	}
+
+	public void doUnbindService() {
+		if (mIsBound) {
+			this.context.unbindService(mConnection);
+			mIsBound = false;
+		}
+	}
+
+	public void sendMessageToService(String message) {
+		if (!mIsBound)
+			return;
+		if (mService != null) {
+			try {
+				Bundle b = new Bundle();
+				b.putString("message", message);
+				Message msg = Message.obtain(null, UdpServerService.MSG_SEND_MESSAGE);
+				msg.setData(b);
+				mService.send(msg);
+			} catch (RemoteException e) {
+
+			}
+		}
+	}
+
+	private Messenger mService = null;
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mService = new Messenger(service);
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			mService = null;
+		}
+	};
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
@@ -95,6 +150,7 @@ public class TouchImageView extends ImageView{
 		@Override
 		public boolean onDown(MotionEvent e) {
 			//Toast.makeText(context, "onDown", Toast.LENGTH_SHORT).show();
+			sendMessageToService("onDown");
 			return super.onDown(e);
 		}
 
@@ -106,7 +162,8 @@ public class TouchImageView extends ImageView{
 
 		@Override
 		public void onLongPress(MotionEvent e) {
-			Toast.makeText(context, "onLongPress", Toast.LENGTH_SHORT).show();
+			sendMessageToService("onLongPress");
+			//Toast.makeText(context, "onLongPress", Toast.LENGTH_SHORT).show();
 			super.onLongPress(e);
 		}
 
