@@ -1,5 +1,8 @@
 package com.asinenko.udpserver;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,28 +26,30 @@ public class TouchImageView extends ImageView{
 
 	private final GestureDetector gestureDetector;
 	private Context context;
-	private SparseArray<PointF> mActivePointers = new SparseArray<PointF>();;
+	private SparseArray<PointF> mActivePointers = new SparseArray<PointF>();
+	private Map<Integer, Long> mActivePointersTime = new LinkedHashMap<Integer, Long>();
 	private boolean mIsBound;
+	private final float coef = 0.5f;
 
 	public TouchImageView(Context context) {
 		super(context);
 		this.context = context;
 		gestureDetector = new GestureDetector(context, new MyGestureListener());
-		//doBindService();
+		doBindService();
 	}
 
 	public TouchImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		this.context = context;
 		gestureDetector = new GestureDetector(context, new MyGestureListener());
-		//doBindService();
+		doBindService();
 	}
 
 	public TouchImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		gestureDetector = new GestureDetector(context, new MyGestureListener());
-		//doBindService();
+		doBindService();
 	}
 
 	public void doBindService() {
@@ -90,38 +95,54 @@ public class TouchImageView extends ImageView{
 		}
 	};
 
+	int x = 0;
+	int y = 0;
+	int currentIndex = 0;
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
-//		if(true){
-//			if (gestureDetector.onTouchEvent(event))
-//				return true;
-//		}
-
-		// get pointer index from the event object
 		int pointerIndex = event.getActionIndex();
-		// get pointer ID
 		int pointerId = event.getPointerId(pointerIndex);
-		// get masked (not specific to a pointer) action
 		int maskedAction = event.getActionMasked();
+
+		x = (int) event.getX();
+		y = (int) event.getY();
 
 		switch(maskedAction){
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-				Log.w("!", "ACTION_POINTER_DOWN id=" + pointerId);
+				//Log.w("!", "ACTION_POINTER_DOWN id=" + pointerId);
+				//sendMessageToService("ACTION_POINTER_DOWN id=" + pointerId + "\n");
 				PointF f = new PointF();
 				f.x = event.getX(pointerIndex);
 				f.y = event.getY(pointerIndex);
 				mActivePointers.put(pointerId, f);
+				mActivePointersTime.put(pointerId, System.currentTimeMillis());
 				break;
 			case MotionEvent.ACTION_MOVE:
+				if(pointerId == 0){
+					sendMessageToService("M," + 
+										String.valueOf(event.getX(pointerIndex) - mActivePointers.get(pointerId).x) + 
+										"," + 
+										String.valueOf(event.getY(pointerIndex) - mActivePointers.get(pointerId).y) + 
+										";\n");
+
+					mActivePointers.get(pointerId).x = event.getX(pointerIndex);
+					mActivePointers.get(pointerId).y = event.getY(pointerIndex);
+				}
 				//Toast.makeText(context, "ACTION_MOVE", Toast.LENGTH_SHORT).show();
 				//Log.w("!", "ACTION_MOVE");
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_UP:
-				Log.w("!", "ACTION_POINTER_UP id=" + pointerId);
+				//Log.w("!", "ACTION_POINTER_UP id=" + pointerId);
+				//sendMessageToService("ACTION_POINTER_UP id=" + pointerId + "\n");
 			case MotionEvent.ACTION_CANCEL:
 				mActivePointers.remove(pointerId);
+				if(System.currentTimeMillis() - mActivePointersTime.get(pointerId) < 1000){
+					sendMessageToService("CLICK\n");
+				}
+				mActivePointersTime.remove(pointerId);
 				break;
 		}
 		return true;

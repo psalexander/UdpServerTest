@@ -22,7 +22,8 @@ import android.util.Log;
 
 public class UdpServerService extends Service{
 
-	private String SERVER_IP = "192.168.77.149";
+	//private String SERVER_IP = "192.168.77.149";
+	private String SERVER_IP = "192.168.1.33";
 	private int SERVERPORT = 28333;
 
 	boolean isConnected = false;
@@ -52,7 +53,8 @@ public class UdpServerService extends Service{
 					break;
 				case MSG_SEND_MESSAGE:
 					//Toast.makeText(getApplicationContext(), "Обновляем настройки", Toast.LENGTH_SHORT).show();
-					Log.w("222", "333");
+					//Log.w("222", "333");
+					Log.w("222", msg.getData().getString("message"));
 					UdpServerService.this.sendMessage(msg.getData().getString("message"));
 
 					break;
@@ -126,71 +128,6 @@ public class UdpServerService extends Service{
 		}
 	}
 
-//	private void runUdpServer() {
-//		String message;
-//		byte[] lmessage = new byte[MAX_UDP_DATAGRAM_LEN];
-//		DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
-//		DatagramSocket socket = null;
-//		try {
-//			socket = new DatagramSocket(UDP_SERVER_PORT);
-//			Log.w("+++", "Receive...");
-//			//socket.
-//			socket.receive(packet);
-//			Log.w("+++", "Conected.");
-//			message = new String(lmessage, 0, packet.getLength());
-//		} catch (SocketException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} finally {
-//			if (socket != null) {
-//				socket.close();
-//			}
-//		}
-//	}
-
-//	private class RunServerInThread extends Thread{
-//		private boolean keepRunning = true;
-//		private String lastmessage = "";
-//		private boolean isConnected = false;
-//
-//		@Override
-//		public void run() {
-//			String message;
-//			byte[] lmessage = new byte[MAX_UDP_DATAGRAM_LEN];
-//			DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
-//			DatagramSocket socket = null;
-//			while(keepRunning){
-//				try {
-//					socket = new DatagramSocket(UDP_SERVER_PORT);
-//					socket.receive(packet);
-//					//message = new String(lmessage, 0, packet.getLength());
-//					isConnected = true;
-////					textMessage.setText(message);
-//				} catch (SocketException e) {
-//					isConnected = false;
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					isConnected = false;
-//					e.printStackTrace();
-//				} finally {
-//					if (socket != null) {
-//						socket.close();
-//					}
-//					isConnected = false;
-//				}
-//			}
-//		}
-//
-//		public void sendMessage(String message){
-//			Log.w("!!!!", "Message is " + message);
-//		}
-//
-//		public boolean isConnected(){
-//			return isConnected;
-//		}
-//	}
-
 	private class SendMessageToServer extends AsyncTask<Void, Void, Void> {
 //		int count = 0;
 //		int notsendcount = 0;
@@ -217,9 +154,6 @@ public class UdpServerService extends Service{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//if(connection.sendMessage("")){
-				//}else{
-				//}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}finally{
