@@ -112,7 +112,7 @@ public class TouchImageView extends ImageView{
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
 				//Log.w("!", "ACTION_POINTER_DOWN id=" + pointerId);
-				//sendMessageToService("ACTION_POINTER_DOWN id=" + pointerId + "\n");
+				sendMessageToService("ACTION_POINTER_DOWN id=" + pointerId + "\n");
 				PointF f = new PointF();
 				f.x = event.getX(pointerIndex);
 				f.y = event.getY(pointerIndex);
@@ -126,7 +126,16 @@ public class TouchImageView extends ImageView{
 										"," + 
 										String.valueOf(event.getY(pointerIndex) - mActivePointers.get(pointerId).y) + 
 										";\n");
-
+//					Log.println(0, "!", "M," + 
+//							String.valueOf(event.getX(pointerIndex) - mActivePointers.get(pointerId).x) + 
+//							"," + 
+//							String.valueOf(event.getY(pointerIndex) - mActivePointers.get(pointerId).y) + 
+//							";\n");
+//					Log.i("!", "M," + 
+//								String.valueOf(event.getX(pointerIndex) - mActivePointers.get(pointerId).x) + 
+//								"," + 
+//								String.valueOf(event.getY(pointerIndex) - mActivePointers.get(pointerId).y) + 
+//								";\n");
 					mActivePointers.get(pointerId).x = event.getX(pointerIndex);
 					mActivePointers.get(pointerId).y = event.getY(pointerIndex);
 				}
@@ -141,6 +150,8 @@ public class TouchImageView extends ImageView{
 				mActivePointers.remove(pointerId);
 				if(System.currentTimeMillis() - mActivePointersTime.get(pointerId) < 1000){
 					sendMessageToService("CLICK\n");
+					//Log.println(0, "!","CLICK\n");
+					//Log.i("!", "CLICK\n");
 				}
 				mActivePointersTime.remove(pointerId);
 				break;

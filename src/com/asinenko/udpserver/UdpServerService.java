@@ -22,8 +22,8 @@ import android.util.Log;
 
 public class UdpServerService extends Service{
 
-	//private String SERVER_IP = "192.168.77.149";
-	private String SERVER_IP = "192.168.1.33";
+	private String SERVER_IP = "192.168.77.149";
+	//private String SERVER_IP = "192.168.1.33";
 	private int SERVERPORT = 28333;
 
 	boolean isConnected = false;
@@ -70,11 +70,8 @@ public class UdpServerService extends Service{
 	}
 
 	public boolean sendMessage(String message){
-		//if (out != null && !out.checkError()) {
 			out.println(message);
-			//out.flush();
 			return true;
-		//}
 	}
 
 	@Override
@@ -89,17 +86,7 @@ public class UdpServerService extends Service{
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-
 		new Thread(new ClientThread()).start();
-
-//		try {
-		//	Thread.sleep(10000);
-		//	sendMessage("0001010101010");
-			//out.println("poiopiopioppoiopi");
-	//	} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-	//		e.printStackTrace();
-	//	}
 		return START_NOT_STICKY;
 	}
 
