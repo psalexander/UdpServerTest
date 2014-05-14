@@ -148,7 +148,7 @@ public class TouchImageView extends ImageView{
 				//sendMessageToService("ACTION_POINTER_UP id=" + pointerId + "\n");
 			case MotionEvent.ACTION_CANCEL:
 				mActivePointers.remove(pointerId);
-				if(System.currentTimeMillis() - mActivePointersTime.get(pointerId) < 1000){
+				if(System.currentTimeMillis() - mActivePointersTime.get(pointerId) < 100){
 					sendMessageToService("CLICK\n");
 					//Log.println(0, "!","CLICK\n");
 					//Log.i("!", "CLICK\n");
