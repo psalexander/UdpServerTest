@@ -22,8 +22,8 @@ import android.util.Log;
 
 public class UdpServerService extends Service{
 
-	private String SERVER_IP = "192.168.77.149";
-	//private String SERVER_IP = "192.168.1.33";
+	//private String SERVER_IP = "192.168.77.149";
+	private String SERVER_IP = "192.168.1.33";
 	private int SERVERPORT = 28333;
 
 	boolean isConnected = false;
