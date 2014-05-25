@@ -2,11 +2,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
-    <com.asinenko.udpserver.TouchImageView 
-        android:id="@+id/imageView1"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="#FF0" />
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="300px"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <com.asinenko.udpserver.RightClickImageView
+                android:layout_width="300px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+         <com.asinenko.udpserver.LeftClickImageView
+                android:layout_width="300px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <com.asinenko.udpserver.TouchImageView 
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="#0F0" />
 
+            
+    </LinearLayout>
 </RelativeLayout>
