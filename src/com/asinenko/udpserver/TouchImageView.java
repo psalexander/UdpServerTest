@@ -29,7 +29,16 @@ public class TouchImageView extends ImageView{
 	private SparseArray<PointF> mActivePointers = new SparseArray<PointF>();
 	private Map<Integer, Long> mActivePointersTime = new LinkedHashMap<Integer, Long>();
 	private boolean mIsBound;
-	private final float coef = 0.5f;
+	private static float coef = 2.0f;
+	private int currentPointerId = -1;
+	private static int scrollStep = 120;
+	int x = 0;
+	int y = 0;
+
+	private int firstPointerId = -1;
+	private int lastPointerId = -1;
+	private float scrollDistanceX = 0;
+	private float scrollDistanceY = 0;
 
 	public TouchImageView(Context context) {
 		super(context);
@@ -95,10 +104,6 @@ public class TouchImageView extends ImageView{
 		}
 	};
 
-	int x = 0;
-	int y = 0;
-	int currentIndex = 0;
-
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
 		int pointerIndex = event.getActionIndex();
@@ -111,49 +116,70 @@ public class TouchImageView extends ImageView{
 		switch(maskedAction){
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-				//Log.w("!", "ACTION_POINTER_DOWN id=" + pointerId);
-				sendMessageToService("ACTION_POINTER_DOWN id=" + pointerId + "\n");
+				if(-1 == currentPointerId){
+					currentPointerId = pointerId;
+				}
 				PointF f = new PointF();
 				f.x = event.getX(pointerIndex);
 				f.y = event.getY(pointerIndex);
 				mActivePointers.put(pointerId, f);
 				mActivePointersTime.put(pointerId, System.currentTimeMillis());
+				if(mActivePointers.size() == 1){
+					coef = 2.0f;
+				}else if(mActivePointers.size() > 1){
+					coef = 1.0f;
+				}
 				break;
 			case MotionEvent.ACTION_MOVE:
-				if(pointerId == 0){
+				float deltaX = (event.getX(pointerIndex) - mActivePointers.get(pointerId).x) * coef;
+				float deltaY = (event.getY(pointerIndex) - mActivePointers.get(pointerId).y) * coef;
+
+				if(pointerId == currentPointerId && mActivePointers.size() < 3){
 					sendMessageToService("M," + 
-										String.valueOf(event.getX(pointerIndex) - mActivePointers.get(pointerId).x) + 
+										String.valueOf(deltaX) + 
 										"," + 
-										String.valueOf(event.getY(pointerIndex) - mActivePointers.get(pointerId).y) + 
+										String.valueOf(deltaY) + 
 										";\n");
-//					Log.println(0, "!", "M," + 
-//							String.valueOf(event.getX(pointerIndex) - mActivePointers.get(pointerId).x) + 
-//							"," + 
-//							String.valueOf(event.getY(pointerIndex) - mActivePointers.get(pointerId).y) + 
-//							";\n");
-//					Log.i("!", "M," + 
-//								String.valueOf(event.getX(pointerIndex) - mActivePointers.get(pointerId).x) + 
-//								"," + 
-//								String.valueOf(event.getY(pointerIndex) - mActivePointers.get(pointerId).y) + 
-//								";\n");
 					mActivePointers.get(pointerId).x = event.getX(pointerIndex);
 					mActivePointers.get(pointerId).y = event.getY(pointerIndex);
+				}else
+				if(mActivePointers.size() >= 3 ){
+					scrollDistanceX += deltaX / coef;
+					scrollDistanceY += deltaY / coef;
+					if(Math.abs(scrollDistanceX) >= scrollStep){
+						if(scrollDistanceX > 0){
+							sendMessageToService("SU\n");
+						}else{
+							sendMessageToService("SD\n");
+						}
+						scrollDistanceX=0;
+					}
 				}
-				//Toast.makeText(context, "ACTION_MOVE", Toast.LENGTH_SHORT).show();
-				//Log.w("!", "ACTION_MOVE");
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_UP:
-				//Log.w("!", "ACTION_POINTER_UP id=" + pointerId);
-				//sendMessageToService("ACTION_POINTER_UP id=" + pointerId + "\n");
 			case MotionEvent.ACTION_CANCEL:
+				if(pointerId == currentPointerId){
+					if(mActivePointers.size() == 0){
+						currentPointerId = -1;
+					}else if(mActivePointers.size() == 1){
+						//for(int i=0; i < 10; i++){
+							//if(null != mActivePointers.keyAt(i)){
+								currentPointerId = mActivePointers.keyAt(0);
+							//}
+						//}
+					}
+				}
 				mActivePointers.remove(pointerId);
 				if(System.currentTimeMillis() - mActivePointersTime.get(pointerId) < 100){
 					sendMessageToService("CLICK\n");
-					//Log.println(0, "!","CLICK\n");
-					//Log.i("!", "CLICK\n");
 				}
 				mActivePointersTime.remove(pointerId);
+				if(mActivePointers.size() == 1){
+					coef = 2.0f;
+				}else if(mActivePointers.size() > 1){
+					coef = 1.0f;
+				}
 				break;
 		}
 		return true;
