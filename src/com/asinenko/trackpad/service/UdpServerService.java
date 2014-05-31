@@ -1,4 +1,4 @@
-package com.asinenko.udpserver;
+package com.asinenko.trackpad.service;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+
+import com.asinenko.trackpad.network.TCPClient;
 
 import android.app.Service;
 import android.content.ComponentName;

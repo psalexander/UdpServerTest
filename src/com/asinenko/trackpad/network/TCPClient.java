@@ -1,4 +1,4 @@
-package com.asinenko.udpserver;
+package com.asinenko.trackpad.network;
 
 import java.io.BufferedWriter;
 import java.io.DataInputStream;

@@ -1,7 +1,9 @@
-package com.asinenko.udpserver;
+package com.asinenko.trackpad.views;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.asinenko.trackpad.service.UdpServerService;
 
 import android.content.ComponentName;
 import android.content.Context;

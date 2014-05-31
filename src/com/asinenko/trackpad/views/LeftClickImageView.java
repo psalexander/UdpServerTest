@@ -1,4 +1,6 @@
-package com.asinenko.udpserver;
+package com.asinenko.trackpad.views;
+
+import com.asinenko.trackpad.service.UdpServerService;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,40 +16,38 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-public class RightClickImageView extends ImageView{
+public class LeftClickImageView extends ImageView{
 
 	private boolean isDown = false;
-	private static int downColor = Color.RED;
-	private static int upColor = Color.LTGRAY;
+	private static int downColor = Color.GREEN;
+	private static int upColor = Color.GRAY;
 	int currentPointerId = -1;
-
 	private Context context;
 
 	private boolean mIsBound;
 	private Messenger mService = null;
 
-
-	public RightClickImageView(Context context) {
+	public LeftClickImageView(Context context) {
 		super(context);
 		this.context = context;
 		setBackgroundColor(upColor);
 		doBindService();
 	}
 
-	public RightClickImageView(Context context, AttributeSet attrs, int defStyle) {
+	public LeftClickImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		this.context = context;
 		setBackgroundColor(upColor);
 		doBindService();
 	}
 
-	public RightClickImageView(Context context, AttributeSet attrs) {
+	public LeftClickImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		setBackgroundColor(upColor);
 		doBindService();
 	}
-	
+
 	public void doBindService() {
 		if(!mIsBound){
 			this.context.bindService(new Intent(this.context, UdpServerService.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -99,7 +99,7 @@ public class RightClickImageView extends ImageView{
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
 				if(!isDown && currentPointerId == -1){
-					sendMessageToService("RD\n");
+					sendMessageToService("LD\n");
 					currentPointerId = pointerId;
 					isDown = true;
 					setBackgroundColor(downColor);
@@ -112,11 +112,11 @@ public class RightClickImageView extends ImageView{
 				
 			case MotionEvent.ACTION_CANCEL:
 				if(isDown && pointerId == currentPointerId){
-					sendMessageToService("RU\n");
+					sendMessageToService("LU\n");
 					currentPointerId = -1;
 					isDown = false;
 					setBackgroundColor(upColor);
-				}
+				} 
 				break;
 		}
 		return true;

@@ -14,7 +14,7 @@
         android:label="@string/app_name">
 
         <activity
-            android:name="com.asinenko.udpserver.MainActivity"
+            android:name="com.asinenko.trackpad.MainActivity"
             android:label="@string/app_name" 
             android:screenOrientation="landscape">
             <intent-filter>
@@ -24,7 +24,7 @@
         </activity>
 
         <service 
-            android:name="com.asinenko.udpserver.UdpServerService"
+            android:name="com.asinenko.trackpad.service.UdpServerService"
             android:enabled="true">
         </service>
     </application>

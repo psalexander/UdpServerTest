@@ -1,4 +1,8 @@
-package com.asinenko.udpserver;
+package com.asinenko.trackpad;
+
+import com.asinenko.trackpad.service.UdpServerService;
+import com.asinenko.trackpad.views.TouchImageView;
+import com.asinenko.udpserver.R;
 
 import android.app.Activity;
 import android.content.Intent;

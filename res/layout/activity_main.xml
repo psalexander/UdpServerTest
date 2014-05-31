@@ -10,16 +10,16 @@
             android:layout_width="300px"
             android:layout_height="match_parent"
             android:orientation="vertical">
-        <com.asinenko.udpserver.RightClickImageView
+        <com.asinenko.trackpad.views.RightClickImageView
                 android:layout_width="300px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
-         <com.asinenko.udpserver.LeftClickImageView
+         <com.asinenko.trackpad.views.LeftClickImageView
                 android:layout_width="300px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
         </LinearLayout>
-        <com.asinenko.udpserver.TouchImageView 
+        <com.asinenko.trackpad.views.TouchImageView 
             android:id="@+id/imageView1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
